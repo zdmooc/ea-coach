@@ -1,0 +1,17 @@
+# Démo : un projet fictif volontairement incomplet, pour voir ce qu'EA Coach signale.
+[project]
+name = "Démo incomplète (banque fictive)"
+rules = "togaf-adm"
+model = "model.archimate"
+root = "."
+
+[deliverables]
+architecture_vision = "docs/vision.md"   # fichier absent : signalé
+
+# Adaptation justifiée : acceptée.
+[not_applicable."B-03"]
+reason = "Migration purement technique : aucun processus métier n'est modifié."
+
+# Adaptation sans justification : refusée (erreur d'adaptation).
+[not_applicable."D-02"]
+reason = ""

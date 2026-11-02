@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="Démo incomplète — banque fictive" id="id-demo" version="5.0.0">
+  <folder name="Motivation" id="id-f-mot" type="motivation">
+    <element xsi:type="archimate:Stakeholder" name="Direction des paiements" id="id-sh1"/>
+    <element xsi:type="archimate:Stakeholder" name="Équipe exploitation" id="id-sh2"/>
+    <element xsi:type="archimate:Goal" name="Réduire les rejets de virements" id="id-g1"/>
+    <element xsi:type="archimate:Goal" name="Moderniser la plateforme" id="id-g2"/>
+    <element xsi:type="archimate:Requirement" name="Tracer chaque rejet" id="id-r1"/>
+    <element xsi:type="archimate:Requirement" name="Disponibilité 99,9 %" id="id-r2"/>
+  </folder>
+  <folder name="Application" id="id-f-app" type="application">
+    <element xsi:type="archimate:ApplicationComponent" name="Moteur de virements" id="id-c1"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Référentiel clients" id="id-c2"/>
+    <element xsi:type="archimate:DataObject" name="Ordre de virement" id="id-d1"/>
+  </folder>
+  <folder name="Implementation &amp; Migration" id="id-f-im" type="implementation_migration">
+    <element xsi:type="archimate:Plateau" name="Cible 2027" id="id-p1"/>
+    <element xsi:type="archimate:WorkPackage" name="Migration du moteur" id="id-wp1"/>
+  </folder>
+  <folder name="Relations" id="id-f-rel" type="relations">
+    <element xsi:type="archimate:AssociationRelationship" id="id-rel1" source="id-sh1" target="id-g1"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-rel2" source="id-c1" target="id-r1"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-rel3" source="id-c2" target="id-c1"/>
+  </folder>
+  <folder name="Views" id="id-f-views" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Applications cibles" id="id-v1" viewpoint="application_cooperation">
+      <child xsi:type="archimate:DiagramObject" id="id-n1" archimateElement="id-c1">
+        <bounds x="24" y="24" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-cn1" source="id-n1" target="id-n2" archimateRelationship="id-rel3"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-n2" archimateElement="id-c2">
+        <bounds x="240" y="24" width="120" height="55"/>
+      </child>
+    </element>
+  </folder>
+</archimate:model>
