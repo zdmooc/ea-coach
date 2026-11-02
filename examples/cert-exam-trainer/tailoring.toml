@@ -1,0 +1,28 @@
+# Adaptation (tailoring) de la démarche TOGAF pour cert-exam-trainer.
+# Source : zdmooc/cert-exam-trainer, docs/architecture/00-preliminary.md (« Tailoring de l'ADM »).
+#
+# Les chemins des livrables sont relatifs à la racine du dépôt cert-exam-trainer,
+# passée avec --root (ou [project].root).
+
+[project]
+name = "Cert Exam Trainer"
+rules = "togaf-adm"
+model = "model.xml"
+root = "../../../cert-exam-trainer"
+
+[deliverables]
+architecture_principles = "docs/architecture/00-preliminary.md"
+tailored_framework = "docs/architecture/00-preliminary.md"
+architecture_vision = "docs/architecture/01-vision.md"
+architecture_roadmap = "docs/architecture/06-roadmap.md"
+architecture_contract = "docs/architecture/07-governance.md"
+change_management = "docs/architecture/07-governance.md"
+architecture_decisions = "docs/architecture/adr/ADR-*.md"
+
+# Une règle peut être déclarée non applicable, avec une justification obligatoire :
+# [not_applicable."B-03"]
+# reason = "…"
+
+# Ajuster la sévérité d'une règle pour ce projet :
+# [severity]
+# "Q-01" = "warning"

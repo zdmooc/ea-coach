@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="id-cert-exam-trainer" xsi:schemaLocation="http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.1/archimate3_Diagram.xsd">
+  <name xml:lang="fr">Cert Exam Trainer</name>
+  <documentation xml:lang="fr">Modèle d'exemple d'EA Coach, dérivé de zdmooc/cert-exam-trainer docs/architecture (phases Preliminary à H, ADR-001 à 004).</documentation>
+  <elements>
+    <element identifier="id-sh-candidat" xsi:type="Stakeholder">
+      <name xml:lang="fr">Candidat (utilisateur)</name>
+      <documentation xml:lang="fr">Réviser partout, savoir quand réserver l'examen, comprendre ses erreurs.</documentation>
+    </element>
+    <element identifier="id-sh-auteur" xsi:type="Stakeholder">
+      <name xml:lang="fr">Auteur des contenus</name>
+      <documentation xml:lang="fr">Éditer en Markdown, sans double saisie.</documentation>
+    </element>
+    <element identifier="id-sh-opengroup" xsi:type="Stakeholder">
+      <name xml:lang="fr">The Open Group (indirect)</name>
+      <documentation xml:lang="fr">Respect de la marque, pas de diffusion de questions officielles.</documentation>
+    </element>
+    <element identifier="id-sh-futurs" xsi:type="Stakeholder">
+      <name xml:lang="fr">Futurs utilisateurs</name>
+      <documentation xml:lang="fr">Contenu en français, appli gratuite.</documentation>
+    </element>
+    <element identifier="id-dr-certif" xsi:type="Driver">
+      <name xml:lang="fr">Préparer TOGAF Foundation puis Practitioner en français</name>
+    </element>
+    <element identifier="id-dr-mobile" xsi:type="Driver">
+      <name xml:lang="fr">Réviser sur mobile, souvent sans réseau</name>
+    </element>
+    <element identifier="id-dr-markdown" xsi:type="Driver">
+      <name xml:lang="fr">Banques de questions en Markdown peu pratiques sur téléphone</name>
+    </element>
+    <element identifier="id-as-biais" xsi:type="Assessment">
+      <name xml:lang="fr">Bonne réponse en position A dans 60 % des questions sources (v1)</name>
+      <documentation xml:lang="fr">391 questions sur 648 dans la première version des sources ; rééquilibré le 1er novembre 2026.</documentation>
+    </element>
+    <element identifier="id-go-reserver" xsi:type="Goal">
+      <name xml:lang="fr">Savoir quand réserver l'examen</name>
+    </element>
+    <element identifier="id-go-partout" xsi:type="Goal">
+      <name xml:lang="fr">Réviser partout, y compris hors ligne</name>
+    </element>
+    <element identifier="id-go-cout" xsi:type="Goal">
+      <name xml:lang="fr">Coût d'exploitation nul</name>
+    </element>
+    <element identifier="id-go-reutiliser" xsi:type="Goal">
+      <name xml:lang="fr">Réutiliser l'appli pour d'autres certifications</name>
+    </element>
+    <element identifier="id-oc-f101" xsi:type="Outcome">
+      <name xml:lang="fr">F101 : ≥ 32/40 sur 3 examens blancs consécutifs</name>
+    </element>
+    <element identifier="id-oc-f102" xsi:type="Outcome">
+      <name xml:lang="fr">F102 : ≥ 28/40 sur 3 examens blancs consécutifs</name>
+    </element>
+    <element identifier="id-oc-zero" xsi:type="Outcome">
+      <name xml:lang="fr">0 € par mois</name>
+    </element>
+    <element identifier="id-pr-p1" xsi:type="Principle">
+      <name xml:lang="fr">P1 — Hors ligne d'abord</name>
+      <documentation xml:lang="fr">Tout le contenu est mis en cache ; aucun appel serveur pendant une session.</documentation>
+    </element>
+    <element identifier="id-pr-p2" xsi:type="Principle">
+      <name xml:lang="fr">P2 — Coût d'exploitation nul</name>
+      <documentation xml:lang="fr">Hébergement statique, pas de serveur ni de base de données.</documentation>
+    </element>
+    <element identifier="id-pr-p3" xsi:type="Principle">
+      <name xml:lang="fr">P3 — Moteur indépendant des certifications</name>
+      <documentation xml:lang="fr">Aucune règle d'examen dans js/core ; tout est décrit dans pack.json.</documentation>
+    </element>
+    <element identifier="id-pr-p4" xsi:type="Principle">
+      <name xml:lang="fr">P4 — Le contenu vit dans les dépôts de cours</name>
+      <documentation xml:lang="fr">Les packs JSON sont générés ; l'appli renvoie vers les cours sans les recopier.</documentation>
+    </element>
+    <element identifier="id-pr-p5" xsi:type="Principle">
+      <name xml:lang="fr">P5 — Contenu original uniquement</name>
+      <documentation xml:lang="fr">Pas de questions officielles ni de dumps ; mention de marque TOGAF.</documentation>
+    </element>
+    <element identifier="id-pr-p6" xsi:type="Principle">
+      <name xml:lang="fr">P6 — Données personnelles sur l'appareil</name>
+      <documentation xml:lang="fr">Pas de compte ; progression locale, exportable.</documentation>
+    </element>
+    <element identifier="id-pr-p7" xsi:type="Principle">
+      <name xml:lang="fr">P7 — Un score doit refléter la compréhension</name>
+      <documentation xml:lang="fr">Options mélangées ; progression remise à zéro quand une question change.</documentation>
+    </element>
+    <element identifier="id-rq-r1" xsi:type="Requirement">
+      <name xml:lang="fr">R1 — Fonctionner hors ligne après la première ouverture</name>
+    </element>
+    <element identifier="id-rq-r2" xsi:type="Requirement">
+      <name xml:lang="fr">R2 — Aucun serveur ni base de données</name>
+    </element>
+    <element identifier="id-rq-r3" xsi:type="Requirement">
+      <name xml:lang="fr">R3 — Aucune règle de certification dans le moteur</name>
+    </element>
+    <element identifier="id-rq-r4" xsi:type="Requirement">
+      <name xml:lang="fr">R4 — Questions générées depuis le dépôt de cours, jamais modifiées à la main</name>
+    </element>
+    <element identifier="id-rq-r5" xsi:type="Requirement">
+      <name xml:lang="fr">R5 — Questions originales et mention de marque</name>
+    </element>
+    <element identifier="id-rq-r6" xsi:type="Requirement">
+      <name xml:lang="fr">R6 — Progression stockée sur l'appareil et exportable</name>
+    </element>
+    <element identifier="id-rq-r7" xsi:type="Requirement">
+      <name xml:lang="fr">R7 — Options mélangées à chaque affichage</name>
+    </element>
+    <element identifier="id-rq-r8" xsi:type="Requirement">
+      <name xml:lang="fr">R8 — Progression remise à zéro quand une question change (empreinte rev)</name>
+    </element>
+    <element identifier="id-rq-r9" xsi:type="Requirement">
+      <name xml:lang="fr">R9 — Examens blancs au format officiel (nombre, durée, barème, seuil)</name>
+    </element>
+    <element identifier="id-rq-r10" xsi:type="Requirement">
+      <name xml:lang="fr">R10 — « Prêt à réserver » après 3 examens blancs consécutifs ≥ objectif</name>
+    </element>
+    <element identifier="id-cs-budget" xsi:type="Constraint">
+      <name xml:lang="fr">Projet personnel, sans budget d'exploitation</name>
+    </element>
+    <element identifier="id-cap-entrainer" xsi:type="Capability">
+      <name xml:lang="fr">S'entraîner</name>
+    </element>
+    <element identifier="id-cap-simuler" xsi:type="Capability">
+      <name xml:lang="fr">Simuler l'examen</name>
+    </element>
+    <element identifier="id-cap-diagnostiquer" xsi:type="Capability">
+      <name xml:lang="fr">Diagnostiquer (domaines et objectifs X2202)</name>
+    </element>
+    <element identifier="id-cap-consolider" xsi:type="Capability">
+      <name xml:lang="fr">Consolider (révision des erreurs)</name>
+    </element>
+    <element identifier="id-cap-decider" xsi:type="Capability">
+      <name xml:lang="fr">Décider de réserver</name>
+    </element>
+    <element identifier="id-cap-ajouter" xsi:type="Capability">
+      <name xml:lang="fr">Ajouter une certification</name>
+    </element>
+    <element identifier="id-ba-candidat" xsi:type="BusinessActor">
+      <name xml:lang="fr">Candidat</name>
+    </element>
+    <element identifier="id-bp-seance" xsi:type="BusinessProcess">
+      <name xml:lang="fr">Séance quotidienne d'entraînement</name>
+    </element>
+    <element identifier="id-bp-examen" xsi:type="BusinessProcess">
+      <name xml:lang="fr">Examen blanc chronométré</name>
+    </element>
+    <element identifier="id-bp-reservation" xsi:type="BusinessProcess">
+      <name xml:lang="fr">Vérification avant réservation</name>
+    </element>
+    <element identifier="id-bp-contenu" xsi:type="BusinessProcess">
+      <name xml:lang="fr">Publication d'une banque de questions</name>
+    </element>
+    <element identifier="id-do-pack" xsi:type="DataObject">
+      <name xml:lang="fr">Pack (définition des examens)</name>
+    </element>
+    <element identifier="id-do-questions" xsi:type="DataObject">
+      <name xml:lang="fr">Questions</name>
+    </element>
+    <element identifier="id-do-objectifs" xsi:type="DataObject">
+      <name xml:lang="fr">Objectifs X2202</name>
+    </element>
+    <element identifier="id-do-session" xsi:type="DataObject">
+      <name xml:lang="fr">Session</name>
+    </element>
+    <element identifier="id-do-progression" xsi:type="DataObject">
+      <name xml:lang="fr">Progression</name>
+    </element>
+    <element identifier="id-do-sauvegarde" xsi:type="DataObject">
+      <name xml:lang="fr">Fichier de sauvegarde</name>
+    </element>
+    <element identifier="id-ac-ui" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Interface mobile (main.js)</name>
+      <documentation xml:lang="fr">Vues et actions ; aucune règle de certification.</documentation>
+    </element>
+    <element identifier="id-ac-moteur" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Moteur d'entraînement (js/core)</name>
+      <documentation xml:lang="fr">Sélection, session, barème, progression, objectifs.</documentation>
+    </element>
+    <element identifier="id-ac-stockage" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Adaptateur de stockage</name>
+      <documentation xml:lang="fr">Port de stockage : localStorage, repli mémoire.</documentation>
+    </element>
+    <element identifier="id-ac-sw" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Service worker (cache hors ligne)</name>
+      <documentation xml:lang="fr">Réseau d'abord, cache en repli.</documentation>
+    </element>
+    <element identifier="id-ac-pipeline" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Pipeline de contenu</name>
+      <documentation xml:lang="fr">content-pipeline/togaf/build.mjs : Markdown → pack JSON.</documentation>
+    </element>
+    <element identifier="id-ac-validateur" xsi:type="ApplicationComponent">
+      <name xml:lang="fr">Validateur de pack</name>
+      <documentation xml:lang="fr">content-pipeline/validate.mjs, bloquant en CI.</documentation>
+    </element>
+    <element identifier="id-as-entrainement" xsi:type="ApplicationService">
+      <name xml:lang="fr">Entraînement avec correction</name>
+    </element>
+    <element identifier="id-as-examen" xsi:type="ApplicationService">
+      <name xml:lang="fr">Examen blanc chronométré</name>
+    </element>
+    <element identifier="id-as-revision" xsi:type="ApplicationService">
+      <name xml:lang="fr">Révision des erreurs</name>
+    </element>
+    <element identifier="id-as-suivi" xsi:type="ApplicationService">
+      <name xml:lang="fr">Suivi de progression et de préparation</name>
+    </element>
+    <element identifier="id-as-sauvegarde" xsi:type="ApplicationService">
+      <name xml:lang="fr">Sauvegarde (export / import)</name>
+    </element>
+    <element identifier="id-as-horsligne" xsi:type="ApplicationService">
+      <name xml:lang="fr">Fonctionnement hors ligne</name>
+    </element>
+    <element identifier="id-as-conversion" xsi:type="ApplicationService">
+      <name xml:lang="fr">Conversion de contenu</name>
+    </element>
+    <element identifier="id-as-validation" xsi:type="ApplicationService">
+      <name xml:lang="fr">Validation de contenu</name>
+    </element>
+    <element identifier="id-dv-telephone" xsi:type="Device">
+      <name xml:lang="fr">Téléphone (Android, iOS)</name>
+    </element>
+    <element identifier="id-ss-navigateur" xsi:type="SystemSoftware">
+      <name xml:lang="fr">Navigateur mobile (Chrome, Samsung Internet, Safari)</name>
+    </element>
+    <element identifier="id-nd-pages" xsi:type="Node">
+      <name xml:lang="fr">GitHub Pages</name>
+    </element>
+    <element identifier="id-nd-actions" xsi:type="Node">
+      <name xml:lang="fr">GitHub Actions</name>
+    </element>
+    <element identifier="id-ts-hebergement" xsi:type="TechnologyService">
+      <name xml:lang="fr">Hébergement statique HTTPS</name>
+    </element>
+    <element identifier="id-ts-execution" xsi:type="TechnologyService">
+      <name xml:lang="fr">Exécution JavaScript et stockage local</name>
+    </element>
+    <element identifier="id-ts-ci" xsi:type="TechnologyService">
+      <name xml:lang="fr">Intégration continue (tests, validation, publication)</name>
+    </element>
+    <element identifier="id-ar-site" xsi:type="Artifact">
+      <name xml:lang="fr">Site statique (_site)</name>
+    </element>
+    <element identifier="id-pl-base" xsi:type="Plateau">
+      <name xml:lang="fr">Base : révision sur les fichiers Markdown du dépôt de cours</name>
+    </element>
+    <element identifier="id-pl-actuel" xsi:type="Plateau">
+      <name xml:lang="fr">Actuel : appli v2.2 (2 novembre 2026)</name>
+    </element>
+    <element identifier="id-pl-cible" xsi:type="Plateau">
+      <name xml:lang="fr">Cible : moteur multi-certifications</name>
+    </element>
+    <element identifier="id-gp-appli" xsi:type="Gap">
+      <name xml:lang="fr">Pas d'appli mobile, pas d'examen chronométré, scores biaisés</name>
+    </element>
+    <element identifier="id-gp-cible" xsi:type="Gap">
+      <name xml:lang="fr">Pas de parcours séquentiel, une seule certification, pas de synchronisation</name>
+    </element>
+    <element identifier="id-wp-v1" xsi:type="WorkPackage">
+      <name xml:lang="fr">v1 — Moteur générique et pack TOGAF</name>
+    </element>
+    <element identifier="id-dl-v1" xsi:type="Deliverable">
+      <name xml:lang="fr">Appli v1 publiée</name>
+    </element>
+    <element identifier="id-wp-v11" xsi:type="WorkPackage">
+      <name xml:lang="fr">v1.1 — Pack enrichi, justifications, séries</name>
+    </element>
+    <element identifier="id-dl-v11" xsi:type="Deliverable">
+      <name xml:lang="fr">Appli v1.1 publiée</name>
+    </element>
+    <element identifier="id-wp-v2" xsi:type="WorkPackage">
+      <name xml:lang="fr">v2 — Export et import de la progression</name>
+    </element>
+    <element identifier="id-dl-v2" xsi:type="Deliverable">
+      <name xml:lang="fr">Appli v2 publiée</name>
+    </element>
+    <element identifier="id-wp-v21" xsi:type="WorkPackage">
+      <name xml:lang="fr">v2.1 — Empreinte rev, Prêt à réserver (lot 1)</name>
+    </element>
+    <element identifier="id-dl-v21" xsi:type="Deliverable">
+      <name xml:lang="fr">Appli v2.1 publiée</name>
+    </element>
+    <element identifier="id-wp-v22" xsi:type="WorkPackage">
+      <name xml:lang="fr">v2.2 — Objectifs X2202 (lot 2)</name>
+    </element>
+    <element identifier="id-dl-v22" xsi:type="Deliverable">
+      <name xml:lang="fr">Appli v2.2 publiée</name>
+    </element>
+    <element identifier="id-wp-v23" xsi:type="WorkPackage">
+      <name xml:lang="fr">v2.3 — Parcours séquentiel</name>
+    </element>
+    <element identifier="id-dl-v23" xsi:type="Deliverable">
+      <name xml:lang="fr">Parcours Foundation → Practitioner</name>
+    </element>
+    <element identifier="id-wp-v3" xsi:type="WorkPackage">
+      <name xml:lang="fr">v3 — Deuxième pack (ArchiMate 3.2)</name>
+    </element>
+    <element identifier="id-dl-v3" xsi:type="Deliverable">
+      <name xml:lang="fr">Pack ArchiMate publié</name>
+    </element>
+    <element identifier="id-wp-v4" xsi:type="WorkPackage">
+      <name xml:lang="fr">v4 — Synchronisation optionnelle</name>
+    </element>
+    <element identifier="id-dl-v4" xsi:type="Deliverable">
+      <name xml:lang="fr">Adaptateur de synchronisation</name>
+    </element>
+  </elements>
+  <relationships>
+    <relationship identifier="id-rel-001" source="id-pr-p1" target="id-rq-r1" xsi:type="Influence" />
+    <relationship identifier="id-rel-002" source="id-pr-p2" target="id-rq-r2" xsi:type="Influence" />
+    <relationship identifier="id-rel-003" source="id-pr-p3" target="id-rq-r3" xsi:type="Influence" />
+    <relationship identifier="id-rel-004" source="id-pr-p4" target="id-rq-r4" xsi:type="Influence" />
+    <relationship identifier="id-rel-005" source="id-pr-p5" target="id-rq-r5" xsi:type="Influence" />
+    <relationship identifier="id-rel-006" source="id-pr-p6" target="id-rq-r6" xsi:type="Influence" />
+    <relationship identifier="id-rel-007" source="id-pr-p7" target="id-rq-r7" xsi:type="Influence" />
+    <relationship identifier="id-rel-008" source="id-pr-p7" target="id-rq-r8" xsi:type="Influence" />
+    <relationship identifier="id-rel-009" source="id-cs-budget" target="id-rq-r2" xsi:type="Influence" />
+    <relationship identifier="id-rel-010" source="id-sh-candidat" target="id-dr-certif" xsi:type="Association" />
+    <relationship identifier="id-rel-011" source="id-sh-candidat" target="id-dr-mobile" xsi:type="Association" />
+    <relationship identifier="id-rel-012" source="id-sh-auteur" target="id-dr-markdown" xsi:type="Association" />
+    <relationship identifier="id-rel-013" source="id-sh-opengroup" target="id-as-biais" xsi:type="Association" />
+    <relationship identifier="id-rel-014" source="id-sh-futurs" target="id-dr-certif" xsi:type="Association" />
+    <relationship identifier="id-rel-015" source="id-sh-opengroup" target="id-rq-r5" xsi:type="Influence" />
+    <relationship identifier="id-rel-016" source="id-dr-certif" target="id-go-reserver" xsi:type="Influence" />
+    <relationship identifier="id-rel-017" source="id-dr-mobile" target="id-go-partout" xsi:type="Influence" />
+    <relationship identifier="id-rel-018" source="id-dr-markdown" target="id-go-partout" xsi:type="Influence" />
+    <relationship identifier="id-rel-019" source="id-as-biais" target="id-go-reserver" xsi:type="Influence" />
+    <relationship identifier="id-rel-020" source="id-sh-candidat" target="id-go-cout" xsi:type="Association" />
+    <relationship identifier="id-rel-021" source="id-sh-futurs" target="id-go-reutiliser" xsi:type="Association" />
+    <relationship identifier="id-rel-022" source="id-oc-f101" target="id-go-reserver" xsi:type="Realization" />
+    <relationship identifier="id-rel-023" source="id-oc-f102" target="id-go-reserver" xsi:type="Realization" />
+    <relationship identifier="id-rel-024" source="id-oc-zero" target="id-go-cout" xsi:type="Realization" />
+    <relationship identifier="id-rel-025" source="id-rq-r1" target="id-go-partout" xsi:type="Realization" />
+    <relationship identifier="id-rel-026" source="id-rq-r2" target="id-oc-zero" xsi:type="Realization" />
+    <relationship identifier="id-rel-027" source="id-rq-r3" target="id-go-reutiliser" xsi:type="Realization" />
+    <relationship identifier="id-rel-028" source="id-rq-r9" target="id-go-reserver" xsi:type="Realization" />
+    <relationship identifier="id-rel-029" source="id-rq-r10" target="id-oc-f101" xsi:type="Realization" />
+    <relationship identifier="id-rel-030" source="id-rq-r10" target="id-oc-f102" xsi:type="Realization" />
+    <relationship identifier="id-rel-031" source="id-rq-r7" target="id-go-reserver" xsi:type="Realization" />
+    <relationship identifier="id-rel-032" source="id-rq-r8" target="id-go-reserver" xsi:type="Realization" />
+    <relationship identifier="id-rel-033" source="id-ba-candidat" target="id-bp-seance" xsi:type="Assignment" />
+    <relationship identifier="id-rel-034" source="id-ba-candidat" target="id-bp-examen" xsi:type="Assignment" />
+    <relationship identifier="id-rel-035" source="id-ba-candidat" target="id-bp-reservation" xsi:type="Assignment" />
+    <relationship identifier="id-rel-036" source="id-bp-seance" target="id-cap-entrainer" xsi:type="Realization" />
+    <relationship identifier="id-rel-037" source="id-bp-seance" target="id-cap-consolider" xsi:type="Realization" />
+    <relationship identifier="id-rel-038" source="id-bp-examen" target="id-cap-simuler" xsi:type="Realization" />
+    <relationship identifier="id-rel-039" source="id-bp-examen" target="id-cap-diagnostiquer" xsi:type="Realization" />
+    <relationship identifier="id-rel-040" source="id-bp-reservation" target="id-cap-decider" xsi:type="Realization" />
+    <relationship identifier="id-rel-041" source="id-bp-contenu" target="id-cap-ajouter" xsi:type="Realization" />
+    <relationship identifier="id-rel-042" source="id-ac-moteur" target="id-as-entrainement" xsi:type="Realization" />
+    <relationship identifier="id-rel-043" source="id-as-entrainement" target="id-do-questions" xsi:type="Access" />
+    <relationship identifier="id-rel-044" source="id-as-entrainement" target="id-do-session" xsi:type="Access" />
+    <relationship identifier="id-rel-045" source="id-as-entrainement" target="id-do-progression" xsi:type="Access" />
+    <relationship identifier="id-rel-046" source="id-as-entrainement" target="id-bp-seance" xsi:type="Serving" />
+    <relationship identifier="id-rel-047" source="id-ac-moteur" target="id-as-examen" xsi:type="Realization" />
+    <relationship identifier="id-rel-048" source="id-as-examen" target="id-do-questions" xsi:type="Access" />
+    <relationship identifier="id-rel-049" source="id-as-examen" target="id-do-pack" xsi:type="Access" />
+    <relationship identifier="id-rel-050" source="id-as-examen" target="id-do-session" xsi:type="Access" />
+    <relationship identifier="id-rel-051" source="id-as-examen" target="id-bp-examen" xsi:type="Serving" />
+    <relationship identifier="id-rel-052" source="id-ac-moteur" target="id-as-revision" xsi:type="Realization" />
+    <relationship identifier="id-rel-053" source="id-as-revision" target="id-do-progression" xsi:type="Access" />
+    <relationship identifier="id-rel-054" source="id-as-revision" target="id-bp-seance" xsi:type="Serving" />
+    <relationship identifier="id-rel-055" source="id-ac-moteur" target="id-as-suivi" xsi:type="Realization" />
+    <relationship identifier="id-rel-056" source="id-as-suivi" target="id-do-progression" xsi:type="Access" />
+    <relationship identifier="id-rel-057" source="id-as-suivi" target="id-do-objectifs" xsi:type="Access" />
+    <relationship identifier="id-rel-058" source="id-as-suivi" target="id-bp-reservation" xsi:type="Serving" />
+    <relationship identifier="id-rel-059" source="id-ac-stockage" target="id-as-sauvegarde" xsi:type="Realization" />
+    <relationship identifier="id-rel-060" source="id-as-sauvegarde" target="id-do-progression" xsi:type="Access" />
+    <relationship identifier="id-rel-061" source="id-as-sauvegarde" target="id-do-sauvegarde" xsi:type="Access" />
+    <relationship identifier="id-rel-062" source="id-as-sauvegarde" target="id-bp-reservation" xsi:type="Serving" />
+    <relationship identifier="id-rel-063" source="id-ac-sw" target="id-as-horsligne" xsi:type="Realization" />
+    <relationship identifier="id-rel-064" source="id-as-horsligne" target="id-do-pack" xsi:type="Access" />
+    <relationship identifier="id-rel-065" source="id-as-horsligne" target="id-do-questions" xsi:type="Access" />
+    <relationship identifier="id-rel-066" source="id-as-horsligne" target="id-bp-seance" xsi:type="Serving" />
+    <relationship identifier="id-rel-067" source="id-ac-pipeline" target="id-as-conversion" xsi:type="Realization" />
+    <relationship identifier="id-rel-068" source="id-as-conversion" target="id-do-pack" xsi:type="Access" />
+    <relationship identifier="id-rel-069" source="id-as-conversion" target="id-do-questions" xsi:type="Access" />
+    <relationship identifier="id-rel-070" source="id-as-conversion" target="id-do-objectifs" xsi:type="Access" />
+    <relationship identifier="id-rel-071" source="id-as-conversion" target="id-bp-contenu" xsi:type="Serving" />
+    <relationship identifier="id-rel-072" source="id-ac-validateur" target="id-as-validation" xsi:type="Realization" />
+    <relationship identifier="id-rel-073" source="id-as-validation" target="id-do-pack" xsi:type="Access" />
+    <relationship identifier="id-rel-074" source="id-as-validation" target="id-do-questions" xsi:type="Access" />
+    <relationship identifier="id-rel-075" source="id-as-validation" target="id-do-objectifs" xsi:type="Access" />
+    <relationship identifier="id-rel-076" source="id-as-validation" target="id-bp-contenu" xsi:type="Serving" />
+    <relationship identifier="id-rel-077" source="id-ac-moteur" target="id-ac-ui" xsi:type="Serving" />
+    <relationship identifier="id-rel-078" source="id-ac-stockage" target="id-ac-ui" xsi:type="Serving" />
+    <relationship identifier="id-rel-079" source="id-ac-validateur" target="id-ac-pipeline" xsi:type="Serving" />
+    <relationship identifier="id-rel-080" source="id-ac-moteur" target="id-rq-r3" xsi:type="Realization" />
+    <relationship identifier="id-rel-081" source="id-ac-pipeline" target="id-rq-r4" xsi:type="Realization" />
+    <relationship identifier="id-rel-082" source="id-ac-ui" target="id-rq-r5" xsi:type="Realization" />
+    <relationship identifier="id-rel-083" source="id-ac-validateur" target="id-rq-r5" xsi:type="Realization" />
+    <relationship identifier="id-rel-084" source="id-ac-stockage" target="id-rq-r6" xsi:type="Realization" />
+    <relationship identifier="id-rel-085" source="id-ac-moteur" target="id-rq-r7" xsi:type="Realization" />
+    <relationship identifier="id-rel-086" source="id-ac-moteur" target="id-rq-r8" xsi:type="Realization" />
+    <relationship identifier="id-rel-087" source="id-ac-validateur" target="id-rq-r8" xsi:type="Realization" />
+    <relationship identifier="id-rel-088" source="id-ac-moteur" target="id-rq-r9" xsi:type="Realization" />
+    <relationship identifier="id-rel-089" source="id-ac-validateur" target="id-rq-r9" xsi:type="Realization" />
+    <relationship identifier="id-rel-090" source="id-ac-moteur" target="id-rq-r10" xsi:type="Realization" />
+    <relationship identifier="id-rel-091" source="id-ac-sw" target="id-rq-r1" xsi:type="Realization" />
+    <relationship identifier="id-rel-092" source="id-dv-telephone" target="id-ss-navigateur" xsi:type="Composition" />
+    <relationship identifier="id-rel-093" source="id-ss-navigateur" target="id-ts-execution" xsi:type="Realization" />
+    <relationship identifier="id-rel-094" source="id-nd-pages" target="id-ts-hebergement" xsi:type="Realization" />
+    <relationship identifier="id-rel-095" source="id-nd-actions" target="id-ts-ci" xsi:type="Realization" />
+    <relationship identifier="id-rel-096" source="id-nd-pages" target="id-ar-site" xsi:type="Assignment" />
+    <relationship identifier="id-rel-097" source="id-ar-site" target="id-ac-ui" xsi:type="Realization" />
+    <relationship identifier="id-rel-098" source="id-ts-execution" target="id-ac-ui" xsi:type="Serving" />
+    <relationship identifier="id-rel-099" source="id-ar-site" target="id-ac-moteur" xsi:type="Realization" />
+    <relationship identifier="id-rel-100" source="id-ts-execution" target="id-ac-moteur" xsi:type="Serving" />
+    <relationship identifier="id-rel-101" source="id-ar-site" target="id-ac-stockage" xsi:type="Realization" />
+    <relationship identifier="id-rel-102" source="id-ts-execution" target="id-ac-stockage" xsi:type="Serving" />
+    <relationship identifier="id-rel-103" source="id-ar-site" target="id-ac-sw" xsi:type="Realization" />
+    <relationship identifier="id-rel-104" source="id-ts-execution" target="id-ac-sw" xsi:type="Serving" />
+    <relationship identifier="id-rel-105" source="id-ts-ci" target="id-ac-pipeline" xsi:type="Serving" />
+    <relationship identifier="id-rel-106" source="id-ts-ci" target="id-ac-validateur" xsi:type="Serving" />
+    <relationship identifier="id-rel-107" source="id-nd-pages" target="id-rq-r2" xsi:type="Realization" />
+    <relationship identifier="id-rel-108" source="id-pl-base" target="id-pl-actuel" xsi:type="Triggering" />
+    <relationship identifier="id-rel-109" source="id-pl-actuel" target="id-pl-cible" xsi:type="Triggering" />
+    <relationship identifier="id-rel-110" source="id-gp-appli" target="id-pl-base" xsi:type="Association" />
+    <relationship identifier="id-rel-111" source="id-gp-appli" target="id-pl-actuel" xsi:type="Association" />
+    <relationship identifier="id-rel-112" source="id-gp-cible" target="id-pl-actuel" xsi:type="Association" />
+    <relationship identifier="id-rel-113" source="id-gp-cible" target="id-pl-cible" xsi:type="Association" />
+    <relationship identifier="id-rel-114" source="id-wp-v1" target="id-dl-v1" xsi:type="Realization" />
+    <relationship identifier="id-rel-115" source="id-dl-v1" target="id-pl-actuel" xsi:type="Realization" />
+    <relationship identifier="id-rel-116" source="id-wp-v1" target="id-gp-appli" xsi:type="Association" />
+    <relationship identifier="id-rel-117" source="id-wp-v11" target="id-dl-v11" xsi:type="Realization" />
+    <relationship identifier="id-rel-118" source="id-dl-v11" target="id-pl-actuel" xsi:type="Realization" />
+    <relationship identifier="id-rel-119" source="id-wp-v11" target="id-gp-appli" xsi:type="Association" />
+    <relationship identifier="id-rel-120" source="id-wp-v1" target="id-wp-v11" xsi:type="Triggering" />
+    <relationship identifier="id-rel-121" source="id-wp-v2" target="id-dl-v2" xsi:type="Realization" />
+    <relationship identifier="id-rel-122" source="id-dl-v2" target="id-pl-actuel" xsi:type="Realization" />
+    <relationship identifier="id-rel-123" source="id-wp-v2" target="id-gp-appli" xsi:type="Association" />
+    <relationship identifier="id-rel-124" source="id-wp-v11" target="id-wp-v2" xsi:type="Triggering" />
+    <relationship identifier="id-rel-125" source="id-wp-v21" target="id-dl-v21" xsi:type="Realization" />
+    <relationship identifier="id-rel-126" source="id-dl-v21" target="id-pl-actuel" xsi:type="Realization" />
+    <relationship identifier="id-rel-127" source="id-wp-v21" target="id-gp-appli" xsi:type="Association" />
+    <relationship identifier="id-rel-128" source="id-wp-v2" target="id-wp-v21" xsi:type="Triggering" />
+    <relationship identifier="id-rel-129" source="id-wp-v22" target="id-dl-v22" xsi:type="Realization" />
+    <relationship identifier="id-rel-130" source="id-dl-v22" target="id-pl-actuel" xsi:type="Realization" />
+    <relationship identifier="id-rel-131" source="id-wp-v22" target="id-gp-appli" xsi:type="Association" />
+    <relationship identifier="id-rel-132" source="id-wp-v21" target="id-wp-v22" xsi:type="Triggering" />
+    <relationship identifier="id-rel-133" source="id-wp-v23" target="id-dl-v23" xsi:type="Realization" />
+    <relationship identifier="id-rel-134" source="id-dl-v23" target="id-pl-cible" xsi:type="Realization" />
+    <relationship identifier="id-rel-135" source="id-wp-v23" target="id-gp-cible" xsi:type="Association" />
+    <relationship identifier="id-rel-136" source="id-wp-v22" target="id-wp-v23" xsi:type="Triggering" />
+    <relationship identifier="id-rel-137" source="id-wp-v3" target="id-dl-v3" xsi:type="Realization" />
+    <relationship identifier="id-rel-138" source="id-dl-v3" target="id-pl-cible" xsi:type="Realization" />
+    <relationship identifier="id-rel-139" source="id-wp-v3" target="id-gp-cible" xsi:type="Association" />
+    <relationship identifier="id-rel-140" source="id-wp-v23" target="id-wp-v3" xsi:type="Triggering" />
+    <relationship identifier="id-rel-141" source="id-wp-v4" target="id-dl-v4" xsi:type="Realization" />
+    <relationship identifier="id-rel-142" source="id-dl-v4" target="id-pl-cible" xsi:type="Realization" />
+    <relationship identifier="id-rel-143" source="id-wp-v4" target="id-gp-cible" xsi:type="Association" />
+    <relationship identifier="id-rel-144" source="id-wp-v3" target="id-wp-v4" xsi:type="Triggering" />
+  </relationships>
+  <views>
+    <diagrams>
+      <view identifier="id-v-motivation" xsi:type="Diagram" viewpoint="Motivation">
+        <name xml:lang="fr">Motivation — parties prenantes, objectifs, principes</name>
+        <node identifier="id-v-motivation-n-sh-candidat" elementRef="id-sh-candidat" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-motivation-n-sh-auteur" elementRef="id-sh-auteur" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-motivation-n-sh-opengroup" elementRef="id-sh-opengroup" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-motivation-n-sh-futurs" elementRef="id-sh-futurs" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-motivation-n-dr-certif" elementRef="id-dr-certif" xsi:type="Element" x="24" y="144" w="170" h="64" />
+        <node identifier="id-v-motivation-n-dr-mobile" elementRef="id-dr-mobile" xsi:type="Element" x="214" y="144" w="170" h="64" />
+        <node identifier="id-v-motivation-n-dr-markdown" elementRef="id-dr-markdown" xsi:type="Element" x="404" y="144" w="170" h="64" />
+        <node identifier="id-v-motivation-n-as-biais" elementRef="id-as-biais" xsi:type="Element" x="594" y="144" w="170" h="64" />
+        <node identifier="id-v-motivation-n-go-reserver" elementRef="id-go-reserver" xsi:type="Element" x="24" y="264" w="170" h="64" />
+        <node identifier="id-v-motivation-n-go-partout" elementRef="id-go-partout" xsi:type="Element" x="214" y="264" w="170" h="64" />
+        <node identifier="id-v-motivation-n-go-cout" elementRef="id-go-cout" xsi:type="Element" x="404" y="264" w="170" h="64" />
+        <node identifier="id-v-motivation-n-go-reutiliser" elementRef="id-go-reutiliser" xsi:type="Element" x="594" y="264" w="170" h="64" />
+        <node identifier="id-v-motivation-n-oc-f101" elementRef="id-oc-f101" xsi:type="Element" x="24" y="384" w="170" h="64" />
+        <node identifier="id-v-motivation-n-oc-f102" elementRef="id-oc-f102" xsi:type="Element" x="214" y="384" w="170" h="64" />
+        <node identifier="id-v-motivation-n-oc-zero" elementRef="id-oc-zero" xsi:type="Element" x="404" y="384" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p1" elementRef="id-pr-p1" xsi:type="Element" x="24" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p2" elementRef="id-pr-p2" xsi:type="Element" x="214" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p3" elementRef="id-pr-p3" xsi:type="Element" x="404" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p4" elementRef="id-pr-p4" xsi:type="Element" x="594" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p5" elementRef="id-pr-p5" xsi:type="Element" x="784" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p6" elementRef="id-pr-p6" xsi:type="Element" x="974" y="504" w="170" h="64" />
+        <node identifier="id-v-motivation-n-pr-p7" elementRef="id-pr-p7" xsi:type="Element" x="24" y="588" w="170" h="64" />
+        <connection identifier="id-rel-010-v-motivation" relationshipRef="id-rel-010" xsi:type="Relationship" source="id-v-motivation-n-sh-candidat" target="id-v-motivation-n-dr-certif" />
+        <connection identifier="id-rel-011-v-motivation" relationshipRef="id-rel-011" xsi:type="Relationship" source="id-v-motivation-n-sh-candidat" target="id-v-motivation-n-dr-mobile" />
+        <connection identifier="id-rel-012-v-motivation" relationshipRef="id-rel-012" xsi:type="Relationship" source="id-v-motivation-n-sh-auteur" target="id-v-motivation-n-dr-markdown" />
+        <connection identifier="id-rel-013-v-motivation" relationshipRef="id-rel-013" xsi:type="Relationship" source="id-v-motivation-n-sh-opengroup" target="id-v-motivation-n-as-biais" />
+        <connection identifier="id-rel-014-v-motivation" relationshipRef="id-rel-014" xsi:type="Relationship" source="id-v-motivation-n-sh-futurs" target="id-v-motivation-n-dr-certif" />
+        <connection identifier="id-rel-016-v-motivation" relationshipRef="id-rel-016" xsi:type="Relationship" source="id-v-motivation-n-dr-certif" target="id-v-motivation-n-go-reserver" />
+        <connection identifier="id-rel-017-v-motivation" relationshipRef="id-rel-017" xsi:type="Relationship" source="id-v-motivation-n-dr-mobile" target="id-v-motivation-n-go-partout" />
+        <connection identifier="id-rel-018-v-motivation" relationshipRef="id-rel-018" xsi:type="Relationship" source="id-v-motivation-n-dr-markdown" target="id-v-motivation-n-go-partout" />
+        <connection identifier="id-rel-019-v-motivation" relationshipRef="id-rel-019" xsi:type="Relationship" source="id-v-motivation-n-as-biais" target="id-v-motivation-n-go-reserver" />
+        <connection identifier="id-rel-020-v-motivation" relationshipRef="id-rel-020" xsi:type="Relationship" source="id-v-motivation-n-sh-candidat" target="id-v-motivation-n-go-cout" />
+        <connection identifier="id-rel-021-v-motivation" relationshipRef="id-rel-021" xsi:type="Relationship" source="id-v-motivation-n-sh-futurs" target="id-v-motivation-n-go-reutiliser" />
+        <connection identifier="id-rel-022-v-motivation" relationshipRef="id-rel-022" xsi:type="Relationship" source="id-v-motivation-n-oc-f101" target="id-v-motivation-n-go-reserver" />
+        <connection identifier="id-rel-023-v-motivation" relationshipRef="id-rel-023" xsi:type="Relationship" source="id-v-motivation-n-oc-f102" target="id-v-motivation-n-go-reserver" />
+        <connection identifier="id-rel-024-v-motivation" relationshipRef="id-rel-024" xsi:type="Relationship" source="id-v-motivation-n-oc-zero" target="id-v-motivation-n-go-cout" />
+      </view>
+      <view identifier="id-v-exigences" xsi:type="Diagram" viewpoint="Requirements Realization">
+        <name xml:lang="fr">Exigences et leur réalisation</name>
+        <node identifier="id-v-exigences-n-pr-p1" elementRef="id-pr-p1" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p2" elementRef="id-pr-p2" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p3" elementRef="id-pr-p3" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p4" elementRef="id-pr-p4" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p5" elementRef="id-pr-p5" xsi:type="Element" x="784" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p6" elementRef="id-pr-p6" xsi:type="Element" x="974" y="24" w="170" h="64" />
+        <node identifier="id-v-exigences-n-pr-p7" elementRef="id-pr-p7" xsi:type="Element" x="24" y="108" w="170" h="64" />
+        <node identifier="id-v-exigences-n-cs-budget" elementRef="id-cs-budget" xsi:type="Element" x="214" y="108" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r1" elementRef="id-rq-r1" xsi:type="Element" x="24" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r2" elementRef="id-rq-r2" xsi:type="Element" x="214" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r3" elementRef="id-rq-r3" xsi:type="Element" x="404" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r4" elementRef="id-rq-r4" xsi:type="Element" x="594" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r5" elementRef="id-rq-r5" xsi:type="Element" x="784" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r6" elementRef="id-rq-r6" xsi:type="Element" x="974" y="228" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r7" elementRef="id-rq-r7" xsi:type="Element" x="24" y="312" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r8" elementRef="id-rq-r8" xsi:type="Element" x="214" y="312" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r9" elementRef="id-rq-r9" xsi:type="Element" x="404" y="312" w="170" h="64" />
+        <node identifier="id-v-exigences-n-rq-r10" elementRef="id-rq-r10" xsi:type="Element" x="594" y="312" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-ui" elementRef="id-ac-ui" xsi:type="Element" x="24" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-moteur" elementRef="id-ac-moteur" xsi:type="Element" x="214" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-stockage" elementRef="id-ac-stockage" xsi:type="Element" x="404" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-sw" elementRef="id-ac-sw" xsi:type="Element" x="594" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-pipeline" elementRef="id-ac-pipeline" xsi:type="Element" x="784" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-ac-validateur" elementRef="id-ac-validateur" xsi:type="Element" x="974" y="432" w="170" h="64" />
+        <node identifier="id-v-exigences-n-nd-pages" elementRef="id-nd-pages" xsi:type="Element" x="24" y="516" w="170" h="64" />
+        <node identifier="id-v-exigences-n-nd-actions" elementRef="id-nd-actions" xsi:type="Element" x="214" y="516" w="170" h="64" />
+        <connection identifier="id-rel-001-v-exigences" relationshipRef="id-rel-001" xsi:type="Relationship" source="id-v-exigences-n-pr-p1" target="id-v-exigences-n-rq-r1" />
+        <connection identifier="id-rel-002-v-exigences" relationshipRef="id-rel-002" xsi:type="Relationship" source="id-v-exigences-n-pr-p2" target="id-v-exigences-n-rq-r2" />
+        <connection identifier="id-rel-003-v-exigences" relationshipRef="id-rel-003" xsi:type="Relationship" source="id-v-exigences-n-pr-p3" target="id-v-exigences-n-rq-r3" />
+        <connection identifier="id-rel-004-v-exigences" relationshipRef="id-rel-004" xsi:type="Relationship" source="id-v-exigences-n-pr-p4" target="id-v-exigences-n-rq-r4" />
+        <connection identifier="id-rel-005-v-exigences" relationshipRef="id-rel-005" xsi:type="Relationship" source="id-v-exigences-n-pr-p5" target="id-v-exigences-n-rq-r5" />
+        <connection identifier="id-rel-006-v-exigences" relationshipRef="id-rel-006" xsi:type="Relationship" source="id-v-exigences-n-pr-p6" target="id-v-exigences-n-rq-r6" />
+        <connection identifier="id-rel-007-v-exigences" relationshipRef="id-rel-007" xsi:type="Relationship" source="id-v-exigences-n-pr-p7" target="id-v-exigences-n-rq-r7" />
+        <connection identifier="id-rel-008-v-exigences" relationshipRef="id-rel-008" xsi:type="Relationship" source="id-v-exigences-n-pr-p7" target="id-v-exigences-n-rq-r8" />
+        <connection identifier="id-rel-009-v-exigences" relationshipRef="id-rel-009" xsi:type="Relationship" source="id-v-exigences-n-cs-budget" target="id-v-exigences-n-rq-r2" />
+        <connection identifier="id-rel-077-v-exigences" relationshipRef="id-rel-077" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-ac-ui" />
+        <connection identifier="id-rel-078-v-exigences" relationshipRef="id-rel-078" xsi:type="Relationship" source="id-v-exigences-n-ac-stockage" target="id-v-exigences-n-ac-ui" />
+        <connection identifier="id-rel-079-v-exigences" relationshipRef="id-rel-079" xsi:type="Relationship" source="id-v-exigences-n-ac-validateur" target="id-v-exigences-n-ac-pipeline" />
+        <connection identifier="id-rel-080-v-exigences" relationshipRef="id-rel-080" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-rq-r3" />
+        <connection identifier="id-rel-081-v-exigences" relationshipRef="id-rel-081" xsi:type="Relationship" source="id-v-exigences-n-ac-pipeline" target="id-v-exigences-n-rq-r4" />
+        <connection identifier="id-rel-082-v-exigences" relationshipRef="id-rel-082" xsi:type="Relationship" source="id-v-exigences-n-ac-ui" target="id-v-exigences-n-rq-r5" />
+        <connection identifier="id-rel-083-v-exigences" relationshipRef="id-rel-083" xsi:type="Relationship" source="id-v-exigences-n-ac-validateur" target="id-v-exigences-n-rq-r5" />
+        <connection identifier="id-rel-084-v-exigences" relationshipRef="id-rel-084" xsi:type="Relationship" source="id-v-exigences-n-ac-stockage" target="id-v-exigences-n-rq-r6" />
+        <connection identifier="id-rel-085-v-exigences" relationshipRef="id-rel-085" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-rq-r7" />
+        <connection identifier="id-rel-086-v-exigences" relationshipRef="id-rel-086" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-rq-r8" />
+        <connection identifier="id-rel-087-v-exigences" relationshipRef="id-rel-087" xsi:type="Relationship" source="id-v-exigences-n-ac-validateur" target="id-v-exigences-n-rq-r8" />
+        <connection identifier="id-rel-088-v-exigences" relationshipRef="id-rel-088" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-rq-r9" />
+        <connection identifier="id-rel-089-v-exigences" relationshipRef="id-rel-089" xsi:type="Relationship" source="id-v-exigences-n-ac-validateur" target="id-v-exigences-n-rq-r9" />
+        <connection identifier="id-rel-090-v-exigences" relationshipRef="id-rel-090" xsi:type="Relationship" source="id-v-exigences-n-ac-moteur" target="id-v-exigences-n-rq-r10" />
+        <connection identifier="id-rel-091-v-exigences" relationshipRef="id-rel-091" xsi:type="Relationship" source="id-v-exigences-n-ac-sw" target="id-v-exigences-n-rq-r1" />
+        <connection identifier="id-rel-107-v-exigences" relationshipRef="id-rel-107" xsi:type="Relationship" source="id-v-exigences-n-nd-pages" target="id-v-exigences-n-rq-r2" />
+      </view>
+      <view identifier="id-v-capacites" xsi:type="Diagram">
+        <name xml:lang="fr">Carte des capacités et processus</name>
+        <node identifier="id-v-capacites-n-cap-entrainer" elementRef="id-cap-entrainer" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-cap-simuler" elementRef="id-cap-simuler" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-cap-diagnostiquer" elementRef="id-cap-diagnostiquer" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-cap-consolider" elementRef="id-cap-consolider" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-cap-decider" elementRef="id-cap-decider" xsi:type="Element" x="784" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-cap-ajouter" elementRef="id-cap-ajouter" xsi:type="Element" x="974" y="24" w="170" h="64" />
+        <node identifier="id-v-capacites-n-ba-candidat" elementRef="id-ba-candidat" xsi:type="Element" x="24" y="144" w="170" h="64" />
+        <node identifier="id-v-capacites-n-bp-seance" elementRef="id-bp-seance" xsi:type="Element" x="214" y="144" w="170" h="64" />
+        <node identifier="id-v-capacites-n-bp-examen" elementRef="id-bp-examen" xsi:type="Element" x="404" y="144" w="170" h="64" />
+        <node identifier="id-v-capacites-n-bp-reservation" elementRef="id-bp-reservation" xsi:type="Element" x="594" y="144" w="170" h="64" />
+        <node identifier="id-v-capacites-n-bp-contenu" elementRef="id-bp-contenu" xsi:type="Element" x="784" y="144" w="170" h="64" />
+        <connection identifier="id-rel-033-v-capacites" relationshipRef="id-rel-033" xsi:type="Relationship" source="id-v-capacites-n-ba-candidat" target="id-v-capacites-n-bp-seance" />
+        <connection identifier="id-rel-034-v-capacites" relationshipRef="id-rel-034" xsi:type="Relationship" source="id-v-capacites-n-ba-candidat" target="id-v-capacites-n-bp-examen" />
+        <connection identifier="id-rel-035-v-capacites" relationshipRef="id-rel-035" xsi:type="Relationship" source="id-v-capacites-n-ba-candidat" target="id-v-capacites-n-bp-reservation" />
+        <connection identifier="id-rel-036-v-capacites" relationshipRef="id-rel-036" xsi:type="Relationship" source="id-v-capacites-n-bp-seance" target="id-v-capacites-n-cap-entrainer" />
+        <connection identifier="id-rel-037-v-capacites" relationshipRef="id-rel-037" xsi:type="Relationship" source="id-v-capacites-n-bp-seance" target="id-v-capacites-n-cap-consolider" />
+        <connection identifier="id-rel-038-v-capacites" relationshipRef="id-rel-038" xsi:type="Relationship" source="id-v-capacites-n-bp-examen" target="id-v-capacites-n-cap-simuler" />
+        <connection identifier="id-rel-039-v-capacites" relationshipRef="id-rel-039" xsi:type="Relationship" source="id-v-capacites-n-bp-examen" target="id-v-capacites-n-cap-diagnostiquer" />
+        <connection identifier="id-rel-040-v-capacites" relationshipRef="id-rel-040" xsi:type="Relationship" source="id-v-capacites-n-bp-reservation" target="id-v-capacites-n-cap-decider" />
+        <connection identifier="id-rel-041-v-capacites" relationshipRef="id-rel-041" xsi:type="Relationship" source="id-v-capacites-n-bp-contenu" target="id-v-capacites-n-cap-ajouter" />
+      </view>
+      <view identifier="id-v-applications" xsi:type="Diagram" viewpoint="Application Cooperation">
+        <name xml:lang="fr">Coopération applicative et données</name>
+        <node identifier="id-v-applications-n-ac-ui" elementRef="id-ac-ui" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-ac-moteur" elementRef="id-ac-moteur" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-ac-stockage" elementRef="id-ac-stockage" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-ac-sw" elementRef="id-ac-sw" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-ac-pipeline" elementRef="id-ac-pipeline" xsi:type="Element" x="784" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-ac-validateur" elementRef="id-ac-validateur" xsi:type="Element" x="974" y="24" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-entrainement" elementRef="id-as-entrainement" xsi:type="Element" x="24" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-examen" elementRef="id-as-examen" xsi:type="Element" x="214" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-revision" elementRef="id-as-revision" xsi:type="Element" x="404" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-suivi" elementRef="id-as-suivi" xsi:type="Element" x="594" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-sauvegarde" elementRef="id-as-sauvegarde" xsi:type="Element" x="784" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-horsligne" elementRef="id-as-horsligne" xsi:type="Element" x="974" y="144" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-conversion" elementRef="id-as-conversion" xsi:type="Element" x="24" y="228" w="170" h="64" />
+        <node identifier="id-v-applications-n-as-validation" elementRef="id-as-validation" xsi:type="Element" x="214" y="228" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-pack" elementRef="id-do-pack" xsi:type="Element" x="24" y="348" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-questions" elementRef="id-do-questions" xsi:type="Element" x="214" y="348" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-objectifs" elementRef="id-do-objectifs" xsi:type="Element" x="404" y="348" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-session" elementRef="id-do-session" xsi:type="Element" x="594" y="348" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-progression" elementRef="id-do-progression" xsi:type="Element" x="784" y="348" w="170" h="64" />
+        <node identifier="id-v-applications-n-do-sauvegarde" elementRef="id-do-sauvegarde" xsi:type="Element" x="974" y="348" w="170" h="64" />
+        <connection identifier="id-rel-042-v-applications" relationshipRef="id-rel-042" xsi:type="Relationship" source="id-v-applications-n-ac-moteur" target="id-v-applications-n-as-entrainement" />
+        <connection identifier="id-rel-043-v-applications" relationshipRef="id-rel-043" xsi:type="Relationship" source="id-v-applications-n-as-entrainement" target="id-v-applications-n-do-questions" />
+        <connection identifier="id-rel-044-v-applications" relationshipRef="id-rel-044" xsi:type="Relationship" source="id-v-applications-n-as-entrainement" target="id-v-applications-n-do-session" />
+        <connection identifier="id-rel-045-v-applications" relationshipRef="id-rel-045" xsi:type="Relationship" source="id-v-applications-n-as-entrainement" target="id-v-applications-n-do-progression" />
+        <connection identifier="id-rel-047-v-applications" relationshipRef="id-rel-047" xsi:type="Relationship" source="id-v-applications-n-ac-moteur" target="id-v-applications-n-as-examen" />
+        <connection identifier="id-rel-048-v-applications" relationshipRef="id-rel-048" xsi:type="Relationship" source="id-v-applications-n-as-examen" target="id-v-applications-n-do-questions" />
+        <connection identifier="id-rel-049-v-applications" relationshipRef="id-rel-049" xsi:type="Relationship" source="id-v-applications-n-as-examen" target="id-v-applications-n-do-pack" />
+        <connection identifier="id-rel-050-v-applications" relationshipRef="id-rel-050" xsi:type="Relationship" source="id-v-applications-n-as-examen" target="id-v-applications-n-do-session" />
+        <connection identifier="id-rel-052-v-applications" relationshipRef="id-rel-052" xsi:type="Relationship" source="id-v-applications-n-ac-moteur" target="id-v-applications-n-as-revision" />
+        <connection identifier="id-rel-053-v-applications" relationshipRef="id-rel-053" xsi:type="Relationship" source="id-v-applications-n-as-revision" target="id-v-applications-n-do-progression" />
+        <connection identifier="id-rel-055-v-applications" relationshipRef="id-rel-055" xsi:type="Relationship" source="id-v-applications-n-ac-moteur" target="id-v-applications-n-as-suivi" />
+        <connection identifier="id-rel-056-v-applications" relationshipRef="id-rel-056" xsi:type="Relationship" source="id-v-applications-n-as-suivi" target="id-v-applications-n-do-progression" />
+        <connection identifier="id-rel-057-v-applications" relationshipRef="id-rel-057" xsi:type="Relationship" source="id-v-applications-n-as-suivi" target="id-v-applications-n-do-objectifs" />
+        <connection identifier="id-rel-059-v-applications" relationshipRef="id-rel-059" xsi:type="Relationship" source="id-v-applications-n-ac-stockage" target="id-v-applications-n-as-sauvegarde" />
+        <connection identifier="id-rel-060-v-applications" relationshipRef="id-rel-060" xsi:type="Relationship" source="id-v-applications-n-as-sauvegarde" target="id-v-applications-n-do-progression" />
+        <connection identifier="id-rel-061-v-applications" relationshipRef="id-rel-061" xsi:type="Relationship" source="id-v-applications-n-as-sauvegarde" target="id-v-applications-n-do-sauvegarde" />
+        <connection identifier="id-rel-063-v-applications" relationshipRef="id-rel-063" xsi:type="Relationship" source="id-v-applications-n-ac-sw" target="id-v-applications-n-as-horsligne" />
+        <connection identifier="id-rel-064-v-applications" relationshipRef="id-rel-064" xsi:type="Relationship" source="id-v-applications-n-as-horsligne" target="id-v-applications-n-do-pack" />
+        <connection identifier="id-rel-065-v-applications" relationshipRef="id-rel-065" xsi:type="Relationship" source="id-v-applications-n-as-horsligne" target="id-v-applications-n-do-questions" />
+        <connection identifier="id-rel-067-v-applications" relationshipRef="id-rel-067" xsi:type="Relationship" source="id-v-applications-n-ac-pipeline" target="id-v-applications-n-as-conversion" />
+        <connection identifier="id-rel-068-v-applications" relationshipRef="id-rel-068" xsi:type="Relationship" source="id-v-applications-n-as-conversion" target="id-v-applications-n-do-pack" />
+        <connection identifier="id-rel-069-v-applications" relationshipRef="id-rel-069" xsi:type="Relationship" source="id-v-applications-n-as-conversion" target="id-v-applications-n-do-questions" />
+        <connection identifier="id-rel-070-v-applications" relationshipRef="id-rel-070" xsi:type="Relationship" source="id-v-applications-n-as-conversion" target="id-v-applications-n-do-objectifs" />
+        <connection identifier="id-rel-072-v-applications" relationshipRef="id-rel-072" xsi:type="Relationship" source="id-v-applications-n-ac-validateur" target="id-v-applications-n-as-validation" />
+        <connection identifier="id-rel-073-v-applications" relationshipRef="id-rel-073" xsi:type="Relationship" source="id-v-applications-n-as-validation" target="id-v-applications-n-do-pack" />
+        <connection identifier="id-rel-074-v-applications" relationshipRef="id-rel-074" xsi:type="Relationship" source="id-v-applications-n-as-validation" target="id-v-applications-n-do-questions" />
+        <connection identifier="id-rel-075-v-applications" relationshipRef="id-rel-075" xsi:type="Relationship" source="id-v-applications-n-as-validation" target="id-v-applications-n-do-objectifs" />
+        <connection identifier="id-rel-077-v-applications" relationshipRef="id-rel-077" xsi:type="Relationship" source="id-v-applications-n-ac-moteur" target="id-v-applications-n-ac-ui" />
+        <connection identifier="id-rel-078-v-applications" relationshipRef="id-rel-078" xsi:type="Relationship" source="id-v-applications-n-ac-stockage" target="id-v-applications-n-ac-ui" />
+        <connection identifier="id-rel-079-v-applications" relationshipRef="id-rel-079" xsi:type="Relationship" source="id-v-applications-n-ac-validateur" target="id-v-applications-n-ac-pipeline" />
+      </view>
+      <view identifier="id-v-technologie" xsi:type="Diagram" viewpoint="Technology">
+        <name xml:lang="fr">Technologie et déploiement</name>
+        <node identifier="id-v-technologie-n-ac-ui" elementRef="id-ac-ui" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ac-moteur" elementRef="id-ac-moteur" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ac-stockage" elementRef="id-ac-stockage" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ac-sw" elementRef="id-ac-sw" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ac-pipeline" elementRef="id-ac-pipeline" xsi:type="Element" x="784" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ac-validateur" elementRef="id-ac-validateur" xsi:type="Element" x="974" y="24" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ts-hebergement" elementRef="id-ts-hebergement" xsi:type="Element" x="24" y="144" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ts-execution" elementRef="id-ts-execution" xsi:type="Element" x="214" y="144" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ts-ci" elementRef="id-ts-ci" xsi:type="Element" x="404" y="144" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ar-site" elementRef="id-ar-site" xsi:type="Element" x="594" y="144" w="170" h="64" />
+        <node identifier="id-v-technologie-n-dv-telephone" elementRef="id-dv-telephone" xsi:type="Element" x="24" y="264" w="170" h="64" />
+        <node identifier="id-v-technologie-n-ss-navigateur" elementRef="id-ss-navigateur" xsi:type="Element" x="214" y="264" w="170" h="64" />
+        <node identifier="id-v-technologie-n-nd-pages" elementRef="id-nd-pages" xsi:type="Element" x="404" y="264" w="170" h="64" />
+        <node identifier="id-v-technologie-n-nd-actions" elementRef="id-nd-actions" xsi:type="Element" x="594" y="264" w="170" h="64" />
+        <connection identifier="id-rel-077-v-technologie" relationshipRef="id-rel-077" xsi:type="Relationship" source="id-v-technologie-n-ac-moteur" target="id-v-technologie-n-ac-ui" />
+        <connection identifier="id-rel-078-v-technologie" relationshipRef="id-rel-078" xsi:type="Relationship" source="id-v-technologie-n-ac-stockage" target="id-v-technologie-n-ac-ui" />
+        <connection identifier="id-rel-079-v-technologie" relationshipRef="id-rel-079" xsi:type="Relationship" source="id-v-technologie-n-ac-validateur" target="id-v-technologie-n-ac-pipeline" />
+        <connection identifier="id-rel-092-v-technologie" relationshipRef="id-rel-092" xsi:type="Relationship" source="id-v-technologie-n-dv-telephone" target="id-v-technologie-n-ss-navigateur" />
+        <connection identifier="id-rel-093-v-technologie" relationshipRef="id-rel-093" xsi:type="Relationship" source="id-v-technologie-n-ss-navigateur" target="id-v-technologie-n-ts-execution" />
+        <connection identifier="id-rel-094-v-technologie" relationshipRef="id-rel-094" xsi:type="Relationship" source="id-v-technologie-n-nd-pages" target="id-v-technologie-n-ts-hebergement" />
+        <connection identifier="id-rel-095-v-technologie" relationshipRef="id-rel-095" xsi:type="Relationship" source="id-v-technologie-n-nd-actions" target="id-v-technologie-n-ts-ci" />
+        <connection identifier="id-rel-096-v-technologie" relationshipRef="id-rel-096" xsi:type="Relationship" source="id-v-technologie-n-nd-pages" target="id-v-technologie-n-ar-site" />
+        <connection identifier="id-rel-097-v-technologie" relationshipRef="id-rel-097" xsi:type="Relationship" source="id-v-technologie-n-ar-site" target="id-v-technologie-n-ac-ui" />
+        <connection identifier="id-rel-098-v-technologie" relationshipRef="id-rel-098" xsi:type="Relationship" source="id-v-technologie-n-ts-execution" target="id-v-technologie-n-ac-ui" />
+        <connection identifier="id-rel-099-v-technologie" relationshipRef="id-rel-099" xsi:type="Relationship" source="id-v-technologie-n-ar-site" target="id-v-technologie-n-ac-moteur" />
+        <connection identifier="id-rel-100-v-technologie" relationshipRef="id-rel-100" xsi:type="Relationship" source="id-v-technologie-n-ts-execution" target="id-v-technologie-n-ac-moteur" />
+        <connection identifier="id-rel-101-v-technologie" relationshipRef="id-rel-101" xsi:type="Relationship" source="id-v-technologie-n-ar-site" target="id-v-technologie-n-ac-stockage" />
+        <connection identifier="id-rel-102-v-technologie" relationshipRef="id-rel-102" xsi:type="Relationship" source="id-v-technologie-n-ts-execution" target="id-v-technologie-n-ac-stockage" />
+        <connection identifier="id-rel-103-v-technologie" relationshipRef="id-rel-103" xsi:type="Relationship" source="id-v-technologie-n-ar-site" target="id-v-technologie-n-ac-sw" />
+        <connection identifier="id-rel-104-v-technologie" relationshipRef="id-rel-104" xsi:type="Relationship" source="id-v-technologie-n-ts-execution" target="id-v-technologie-n-ac-sw" />
+        <connection identifier="id-rel-105-v-technologie" relationshipRef="id-rel-105" xsi:type="Relationship" source="id-v-technologie-n-ts-ci" target="id-v-technologie-n-ac-pipeline" />
+        <connection identifier="id-rel-106-v-technologie" relationshipRef="id-rel-106" xsi:type="Relationship" source="id-v-technologie-n-ts-ci" target="id-v-technologie-n-ac-validateur" />
+      </view>
+      <view identifier="id-v-migration" xsi:type="Diagram" viewpoint="Implementation and Migration">
+        <name xml:lang="fr">Feuille de route (implémentation et migration)</name>
+        <node identifier="id-v-migration-n-pl-base" elementRef="id-pl-base" xsi:type="Element" x="24" y="24" w="170" h="64" />
+        <node identifier="id-v-migration-n-pl-actuel" elementRef="id-pl-actuel" xsi:type="Element" x="214" y="24" w="170" h="64" />
+        <node identifier="id-v-migration-n-pl-cible" elementRef="id-pl-cible" xsi:type="Element" x="404" y="24" w="170" h="64" />
+        <node identifier="id-v-migration-n-gp-appli" elementRef="id-gp-appli" xsi:type="Element" x="594" y="24" w="170" h="64" />
+        <node identifier="id-v-migration-n-gp-cible" elementRef="id-gp-cible" xsi:type="Element" x="784" y="24" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v1" elementRef="id-wp-v1" xsi:type="Element" x="24" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v11" elementRef="id-wp-v11" xsi:type="Element" x="214" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v2" elementRef="id-wp-v2" xsi:type="Element" x="404" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v21" elementRef="id-wp-v21" xsi:type="Element" x="594" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v22" elementRef="id-wp-v22" xsi:type="Element" x="784" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v23" elementRef="id-wp-v23" xsi:type="Element" x="974" y="144" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v3" elementRef="id-wp-v3" xsi:type="Element" x="24" y="228" w="170" h="64" />
+        <node identifier="id-v-migration-n-wp-v4" elementRef="id-wp-v4" xsi:type="Element" x="214" y="228" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v1" elementRef="id-dl-v1" xsi:type="Element" x="24" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v11" elementRef="id-dl-v11" xsi:type="Element" x="214" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v2" elementRef="id-dl-v2" xsi:type="Element" x="404" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v21" elementRef="id-dl-v21" xsi:type="Element" x="594" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v22" elementRef="id-dl-v22" xsi:type="Element" x="784" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v23" elementRef="id-dl-v23" xsi:type="Element" x="974" y="348" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v3" elementRef="id-dl-v3" xsi:type="Element" x="24" y="432" w="170" h="64" />
+        <node identifier="id-v-migration-n-dl-v4" elementRef="id-dl-v4" xsi:type="Element" x="214" y="432" w="170" h="64" />
+        <connection identifier="id-rel-108-v-migration" relationshipRef="id-rel-108" xsi:type="Relationship" source="id-v-migration-n-pl-base" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-109-v-migration" relationshipRef="id-rel-109" xsi:type="Relationship" source="id-v-migration-n-pl-actuel" target="id-v-migration-n-pl-cible" />
+        <connection identifier="id-rel-110-v-migration" relationshipRef="id-rel-110" xsi:type="Relationship" source="id-v-migration-n-gp-appli" target="id-v-migration-n-pl-base" />
+        <connection identifier="id-rel-111-v-migration" relationshipRef="id-rel-111" xsi:type="Relationship" source="id-v-migration-n-gp-appli" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-112-v-migration" relationshipRef="id-rel-112" xsi:type="Relationship" source="id-v-migration-n-gp-cible" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-113-v-migration" relationshipRef="id-rel-113" xsi:type="Relationship" source="id-v-migration-n-gp-cible" target="id-v-migration-n-pl-cible" />
+        <connection identifier="id-rel-114-v-migration" relationshipRef="id-rel-114" xsi:type="Relationship" source="id-v-migration-n-wp-v1" target="id-v-migration-n-dl-v1" />
+        <connection identifier="id-rel-115-v-migration" relationshipRef="id-rel-115" xsi:type="Relationship" source="id-v-migration-n-dl-v1" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-116-v-migration" relationshipRef="id-rel-116" xsi:type="Relationship" source="id-v-migration-n-wp-v1" target="id-v-migration-n-gp-appli" />
+        <connection identifier="id-rel-117-v-migration" relationshipRef="id-rel-117" xsi:type="Relationship" source="id-v-migration-n-wp-v11" target="id-v-migration-n-dl-v11" />
+        <connection identifier="id-rel-118-v-migration" relationshipRef="id-rel-118" xsi:type="Relationship" source="id-v-migration-n-dl-v11" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-119-v-migration" relationshipRef="id-rel-119" xsi:type="Relationship" source="id-v-migration-n-wp-v11" target="id-v-migration-n-gp-appli" />
+        <connection identifier="id-rel-120-v-migration" relationshipRef="id-rel-120" xsi:type="Relationship" source="id-v-migration-n-wp-v1" target="id-v-migration-n-wp-v11" />
+        <connection identifier="id-rel-121-v-migration" relationshipRef="id-rel-121" xsi:type="Relationship" source="id-v-migration-n-wp-v2" target="id-v-migration-n-dl-v2" />
+        <connection identifier="id-rel-122-v-migration" relationshipRef="id-rel-122" xsi:type="Relationship" source="id-v-migration-n-dl-v2" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-123-v-migration" relationshipRef="id-rel-123" xsi:type="Relationship" source="id-v-migration-n-wp-v2" target="id-v-migration-n-gp-appli" />
+        <connection identifier="id-rel-124-v-migration" relationshipRef="id-rel-124" xsi:type="Relationship" source="id-v-migration-n-wp-v11" target="id-v-migration-n-wp-v2" />
+        <connection identifier="id-rel-125-v-migration" relationshipRef="id-rel-125" xsi:type="Relationship" source="id-v-migration-n-wp-v21" target="id-v-migration-n-dl-v21" />
+        <connection identifier="id-rel-126-v-migration" relationshipRef="id-rel-126" xsi:type="Relationship" source="id-v-migration-n-dl-v21" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-127-v-migration" relationshipRef="id-rel-127" xsi:type="Relationship" source="id-v-migration-n-wp-v21" target="id-v-migration-n-gp-appli" />
+        <connection identifier="id-rel-128-v-migration" relationshipRef="id-rel-128" xsi:type="Relationship" source="id-v-migration-n-wp-v2" target="id-v-migration-n-wp-v21" />
+        <connection identifier="id-rel-129-v-migration" relationshipRef="id-rel-129" xsi:type="Relationship" source="id-v-migration-n-wp-v22" target="id-v-migration-n-dl-v22" />
+        <connection identifier="id-rel-130-v-migration" relationshipRef="id-rel-130" xsi:type="Relationship" source="id-v-migration-n-dl-v22" target="id-v-migration-n-pl-actuel" />
+        <connection identifier="id-rel-131-v-migration" relationshipRef="id-rel-131" xsi:type="Relationship" source="id-v-migration-n-wp-v22" target="id-v-migration-n-gp-appli" />
+        <connection identifier="id-rel-132-v-migration" relationshipRef="id-rel-132" xsi:type="Relationship" source="id-v-migration-n-wp-v21" target="id-v-migration-n-wp-v22" />
+        <connection identifier="id-rel-133-v-migration" relationshipRef="id-rel-133" xsi:type="Relationship" source="id-v-migration-n-wp-v23" target="id-v-migration-n-dl-v23" />
+        <connection identifier="id-rel-134-v-migration" relationshipRef="id-rel-134" xsi:type="Relationship" source="id-v-migration-n-dl-v23" target="id-v-migration-n-pl-cible" />
+        <connection identifier="id-rel-135-v-migration" relationshipRef="id-rel-135" xsi:type="Relationship" source="id-v-migration-n-wp-v23" target="id-v-migration-n-gp-cible" />
+        <connection identifier="id-rel-136-v-migration" relationshipRef="id-rel-136" xsi:type="Relationship" source="id-v-migration-n-wp-v22" target="id-v-migration-n-wp-v23" />
+        <connection identifier="id-rel-137-v-migration" relationshipRef="id-rel-137" xsi:type="Relationship" source="id-v-migration-n-wp-v3" target="id-v-migration-n-dl-v3" />
+        <connection identifier="id-rel-138-v-migration" relationshipRef="id-rel-138" xsi:type="Relationship" source="id-v-migration-n-dl-v3" target="id-v-migration-n-pl-cible" />
+        <connection identifier="id-rel-139-v-migration" relationshipRef="id-rel-139" xsi:type="Relationship" source="id-v-migration-n-wp-v3" target="id-v-migration-n-gp-cible" />
+        <connection identifier="id-rel-140-v-migration" relationshipRef="id-rel-140" xsi:type="Relationship" source="id-v-migration-n-wp-v23" target="id-v-migration-n-wp-v3" />
+        <connection identifier="id-rel-141-v-migration" relationshipRef="id-rel-141" xsi:type="Relationship" source="id-v-migration-n-wp-v4" target="id-v-migration-n-dl-v4" />
+        <connection identifier="id-rel-142-v-migration" relationshipRef="id-rel-142" xsi:type="Relationship" source="id-v-migration-n-dl-v4" target="id-v-migration-n-pl-cible" />
+        <connection identifier="id-rel-143-v-migration" relationshipRef="id-rel-143" xsi:type="Relationship" source="id-v-migration-n-wp-v4" target="id-v-migration-n-gp-cible" />
+        <connection identifier="id-rel-144-v-migration" relationshipRef="id-rel-144" xsi:type="Relationship" source="id-v-migration-n-wp-v3" target="id-v-migration-n-wp-v4" />
+      </view>
+    </diagrams>
+  </views>
+</model>

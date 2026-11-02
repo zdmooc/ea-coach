@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Références ArchiMate d'Archi (XSD Open Exchange + table des relations)
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/archimatetool/archi.git /tmp/archi
+          git -C /tmp/archi sparse-checkout set --no-cone 'org.opengroup.archimate.xmlexchange/xsd/*' 'com.archimatetool.model/model/relationships.xml'
+          pip install lxml
+
+      - name: Le modèle d'exemple est valide ArchiMate
+        run: python tools/validate_archimate.py examples/cert-exam-trainer/model.xml --archi /tmp/archi
+
+      - name: Contrôler cert-exam-trainer (modèle + livrables du dépôt)
+        run: |
+          git clone --depth 1 https://github.com/zdmooc/cert-exam-trainer.git ../cert-exam-trainer
+          python -m ea_coach check examples/cert-exam-trainer/tailoring.toml --out reports/cert-exam-trainer.md
+          python -m ea_coach check examples/cert-exam-trainer/tailoring.toml --format json --out reports/cert-exam-trainer.json
+
+      - name: Démo volontairement incomplète (rapport seulement)
+        if: always()
+        run: python -m ea_coach check examples/demo-incomplet/tailoring.toml --no-fail --out reports/demo-incomplet.md
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rapports-ea-coach
+          path: reports/

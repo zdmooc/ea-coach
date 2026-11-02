@@ -1,0 +1,427 @@
+# Jeu de règles « TOGAF ADM » d'EA Coach.
+#
+# Ces règles contrôlent la PRÉSENCE et la TRAÇABILITÉ de ce que l'ADM attend,
+# pas la qualité du contenu. Elles sont une lecture outillée de la méthode,
+# non une norme de The Open Group. Chaque projet adapte (tailoring) ce jeu :
+# une règle peut être déclarée non applicable, avec une justification obligatoire.
+#
+# Types de règles :
+#   presence    : au moins `min` éléments parmi `types`
+#   trace       : chaque élément de `subject` est relié à au moins un élément de `linked`
+#                 (option `rel_types`, `direction` = out | in | any)
+#   deliverable : le livrable `key` est déclaré dans le tailoring et ses fichiers existent
+#   view        : au moins une vue dont le viewpoint est dans `viewpoints`
+#                 ou qui montre un élément de `contains`
+#   plateaus    : au moins 2 plateaux et un Gap relié à deux plateaux distincts
+#   in_view     : chaque élément de `types` apparaît dans au moins une vue
+#
+# Sévérité : error (manque bloquant), warning (alerte), info.
+
+[pack]
+id = "togaf-adm"
+name = "TOGAF ADM — contrôles de démarche"
+reference = "TOGAF® Standard, 10e édition — ADM et Architecture Content Framework, modélisés en ArchiMate® 3.x"
+
+[[phase]]
+id = "preliminary"
+label = "Preliminary"
+[[phase]]
+id = "a"
+label = "Phase A — Architecture Vision"
+[[phase]]
+id = "b"
+label = "Phase B — Business Architecture"
+[[phase]]
+id = "c"
+label = "Phase C — Information Systems (Data, Application)"
+[[phase]]
+id = "d"
+label = "Phase D — Technology Architecture"
+[[phase]]
+id = "ef"
+label = "Phases E et F — Opportunities, Migration Planning"
+[[phase]]
+id = "g"
+label = "Phase G — Implementation Governance"
+[[phase]]
+id = "h"
+label = "Phase H — Architecture Change Management"
+[[phase]]
+id = "rm"
+label = "Requirements Management"
+[[phase]]
+id = "quality"
+label = "Qualité du modèle"
+
+# ---------- Preliminary ----------
+
+[[rule]]
+id = "PRE-01"
+phase = "preliminary"
+kind = "presence"
+types = ["Principle"]
+min = 1
+severity = "error"
+title = "Des principes d'architecture sont modélisés"
+why = "La phase préliminaire établit les Architecture Principles qui guident toutes les décisions suivantes."
+fix = "Ajouter des éléments Principle (couche Motivation) reprenant les principes du projet."
+
+[[rule]]
+id = "PRE-02"
+phase = "preliminary"
+kind = "deliverable"
+key = "architecture_principles"
+severity = "error"
+title = "Le document des principes d'architecture existe"
+why = "Les principes s'énoncent avec nom, énoncé, justification et implications ; ce texte ne tient pas dans un diagramme."
+fix = "Déclarer le fichier dans [deliverables] architecture_principles du tailoring."
+
+[[rule]]
+id = "PRE-03"
+phase = "preliminary"
+kind = "trace"
+subject = ["Principle"]
+linked = ["Requirement", "Constraint", "Goal", "Outcome"]
+severity = "warning"
+title = "Chaque principe a une conséquence visible"
+why = "Un principe sans implication tracée ne guide aucune décision vérifiable."
+fix = "Relier le principe (Influence, Realization ou Association) aux exigences ou contraintes qu'il implique."
+
+[[rule]]
+id = "PRE-04"
+phase = "preliminary"
+kind = "deliverable"
+key = "tailored_framework"
+severity = "warning"
+title = "L'adaptation de la méthode (tailoring) est documentée"
+why = "Le Tailored Architecture Framework explique ce qui est fait, allégé ou écarté pour ce projet."
+fix = "Décrire l'adaptation dans un document et le déclarer dans [deliverables] tailored_framework."
+
+# ---------- Phase A ----------
+
+[[rule]]
+id = "A-01"
+phase = "a"
+kind = "presence"
+types = ["Stakeholder"]
+min = 1
+severity = "error"
+title = "Les parties prenantes sont identifiées"
+why = "La phase A commence par identifier les stakeholders et leurs concerns."
+fix = "Ajouter des éléments Stakeholder."
+
+[[rule]]
+id = "A-02"
+phase = "a"
+kind = "presence"
+types = ["Goal"]
+min = 1
+severity = "error"
+title = "Des objectifs métier sont formulés"
+why = "L'Architecture Vision relie la transformation à des business goals mesurables."
+fix = "Ajouter des éléments Goal (et Outcome si possible)."
+
+[[rule]]
+id = "A-03"
+phase = "a"
+kind = "presence"
+types = ["Driver"]
+min = 1
+severity = "warning"
+title = "Les moteurs du changement (drivers) sont explicites"
+why = "Les business drivers expliquent pourquoi l'architecture est nécessaire maintenant."
+fix = "Ajouter des éléments Driver reliés aux objectifs."
+
+[[rule]]
+id = "A-04"
+phase = "a"
+kind = "trace"
+subject = ["Goal"]
+linked = ["Stakeholder", "Driver", "Assessment"]
+severity = "error"
+title = "Chaque objectif est porté par une partie prenante ou un driver"
+why = "Un objectif sans origine identifiée n'a pas de légitimité ni de responsable."
+fix = "Relier l'objectif à un Stakeholder ou à un Driver (Influence ou Association)."
+
+[[rule]]
+id = "A-05"
+phase = "a"
+kind = "trace"
+subject = ["Stakeholder"]
+linked = ["Driver", "Goal", "Assessment", "Outcome", "Requirement", "Constraint"]
+severity = "warning"
+title = "Chaque partie prenante a une préoccupation modélisée"
+why = "La gestion des parties prenantes part de leurs concerns ; une partie prenante sans concern est un nom sur une liste."
+fix = "Relier le Stakeholder aux Drivers, Goals ou Assessments qui expriment ses préoccupations."
+
+[[rule]]
+id = "A-06"
+phase = "a"
+kind = "deliverable"
+key = "architecture_vision"
+severity = "error"
+title = "L'Architecture Vision existe"
+why = "C'est le livrable central de la phase A : périmètre, valeur, parties prenantes, indicateurs."
+fix = "Déclarer le document dans [deliverables] architecture_vision."
+
+[[rule]]
+id = "A-07"
+phase = "a"
+kind = "view"
+viewpoints = ["Stakeholder", "Motivation", "Goal Realization", "Requirements Realization"]
+severity = "warning"
+title = "Une vue présente les parties prenantes et leurs objectifs"
+why = "Les décisions de phase A se prennent sur des vues adaptées aux concerns des parties prenantes."
+fix = "Créer une vue avec le viewpoint Stakeholder, Motivation ou Goal Realization."
+
+# ---------- Phase B ----------
+
+[[rule]]
+id = "B-01"
+phase = "b"
+kind = "presence"
+types = ["Capability", "ValueStream", "BusinessProcess", "BusinessFunction", "BusinessService"]
+min = 1
+severity = "error"
+title = "L'architecture métier est décrite"
+why = "La phase B décrit ce que l'entreprise doit savoir faire, indépendamment des applications."
+fix = "Ajouter des Capability, Value Stream ou processus métier."
+
+[[rule]]
+id = "B-02"
+phase = "b"
+kind = "trace"
+subject = ["Capability"]
+linked = ["BusinessProcess", "BusinessFunction", "BusinessService", "ValueStream", "ApplicationService", "ApplicationComponent", "Resource", "CourseOfAction"]
+severity = "warning"
+title = "Chaque capacité est réalisée par quelque chose"
+why = "Une capacité qu'aucun processus, service ou ressource ne réalise reste un souhait."
+fix = "Relier la Capability (Realization) aux processus, services ou ressources qui la portent."
+
+[[rule]]
+id = "B-03"
+phase = "b"
+kind = "view"
+viewpoints = ["Capability Map", "Strategy", "Value Stream", "Business Process Cooperation", "Service Realization"]
+contains = ["Capability"]
+severity = "warning"
+title = "Une vue métier (carte des capacités) existe"
+why = "La carte des capacités est l'artefact le plus utilisé pour arbitrer la transformation."
+fix = "Créer une vue Capability Map."
+
+# ---------- Phase C ----------
+
+[[rule]]
+id = "C-01"
+phase = "c"
+kind = "presence"
+types = ["DataObject", "BusinessObject"]
+min = 1
+severity = "error"
+title = "Les données sont décrites"
+why = "La Data Architecture identifie les entités de données et leur propriétaire."
+fix = "Ajouter des Data Object ou Business Object."
+
+[[rule]]
+id = "C-02"
+phase = "c"
+kind = "presence"
+types = ["ApplicationComponent"]
+min = 1
+severity = "error"
+title = "Les composants applicatifs sont décrits"
+why = "L'Application Architecture identifie les applications et leurs interactions."
+fix = "Ajouter des Application Component."
+
+[[rule]]
+id = "C-03"
+phase = "c"
+kind = "trace"
+subject = ["DataObject"]
+linked = ["ApplicationService", "ApplicationFunction", "ApplicationProcess", "ApplicationComponent", "BusinessObject"]
+severity = "warning"
+title = "Chaque donnée est utilisée par une application"
+why = "Une donnée qu'aucun composant n'utilise est soit oubliée dans les flux, soit inutile."
+fix = "Relier le Data Object (Access) au service ou composant qui le lit ou l'écrit."
+
+[[rule]]
+id = "C-04"
+phase = "c"
+kind = "trace"
+subject = ["ApplicationComponent"]
+linked = ["ApplicationService", "ApplicationFunction", "ApplicationProcess", "ApplicationInterface", "ApplicationComponent", "BusinessProcess", "Capability", "Requirement"]
+severity = "warning"
+title = "Chaque composant applicatif a un rôle tracé"
+why = "Un composant isolé ne montre ni ce qu'il rend comme service ni à quoi il sert."
+fix = "Relier le composant aux services qu'il réalise ou aux composants avec lesquels il coopère."
+
+# ---------- Phase D ----------
+
+[[rule]]
+id = "D-01"
+phase = "d"
+kind = "presence"
+types = ["Node", "Device", "SystemSoftware", "TechnologyService", "CommunicationNetwork"]
+min = 1
+severity = "error"
+title = "La plateforme technique est décrite"
+why = "La Technology Architecture décrit l'infrastructure qui porte les applications."
+fix = "Ajouter des Node, System Software ou Technology Service."
+
+[[rule]]
+id = "D-02"
+phase = "d"
+kind = "trace"
+subject = ["ApplicationComponent"]
+linked = ["Node", "Device", "SystemSoftware", "TechnologyService", "Artifact"]
+severity = "warning"
+title = "Chaque composant applicatif repose sur une technologie identifiée"
+why = "Sans lien vers la technologie, impossible d'évaluer l'impact d'un changement d'infrastructure."
+fix = "Relier le composant à un Technology Service (Serving) ou à l'Artifact qui le réalise."
+
+# ---------- Phases E et F ----------
+
+[[rule]]
+id = "EF-01"
+phase = "ef"
+kind = "plateaus"
+severity = "error"
+title = "Les états de base et cible, et l'écart entre eux, sont modélisés"
+why = "L'analyse d'écarts (gap analysis) compare une Baseline et une Target ; sans les deux, elle est impossible."
+fix = "Ajouter au moins deux Plateau (base et cible) et un Gap associé aux deux."
+
+[[rule]]
+id = "EF-02"
+phase = "ef"
+kind = "presence"
+types = ["WorkPackage"]
+min = 1
+severity = "error"
+title = "Le travail de transformation est découpé en lots"
+why = "Les phases E et F regroupent les changements en work packages ordonnés."
+fix = "Ajouter des Work Package."
+
+[[rule]]
+id = "EF-03"
+phase = "ef"
+kind = "trace"
+subject = ["WorkPackage"]
+linked = ["Deliverable", "Gap", "Plateau"]
+severity = "error"
+title = "Chaque lot produit un livrable ou comble un écart"
+why = "Un work package qui ne réalise aucun livrable et ne comble aucun gap n'a pas de justification d'architecture."
+fix = "Relier le Work Package à un Deliverable (Realization) ou au Gap qu'il comble (Association)."
+
+[[rule]]
+id = "EF-04"
+phase = "ef"
+kind = "trace"
+subject = ["Gap"]
+linked = ["WorkPackage", "Deliverable"]
+severity = "warning"
+title = "Chaque écart est pris en charge par un lot"
+why = "Un gap sans work package est un écart identifié mais jamais planifié."
+fix = "Associer le Gap au Work Package qui le comble."
+
+[[rule]]
+id = "EF-05"
+phase = "ef"
+kind = "view"
+viewpoints = ["Migration", "Implementation and Migration", "Project"]
+contains = ["Plateau", "WorkPackage"]
+severity = "warning"
+title = "Une vue de migration existe"
+why = "La feuille de route se lit sur une vue Implementation and Migration ou Migration."
+fix = "Créer une vue montrant plateaux, gaps et work packages."
+
+[[rule]]
+id = "EF-06"
+phase = "ef"
+kind = "deliverable"
+key = "architecture_roadmap"
+severity = "error"
+title = "L'Architecture Roadmap existe"
+why = "La roadmap ordonne les lots et les transitions ; c'est un livrable des phases E et F."
+fix = "Déclarer le document dans [deliverables] architecture_roadmap."
+
+# ---------- Phase G ----------
+
+[[rule]]
+id = "G-01"
+phase = "g"
+kind = "deliverable"
+key = "architecture_contract"
+severity = "warning"
+title = "Le contrat d'architecture (ou son équivalent) est documenté"
+why = "La phase G gouverne la mise en œuvre au travers d'un Architecture Contract et de revues de conformité."
+fix = "Déclarer le document dans [deliverables] architecture_contract."
+
+# ---------- Phase H ----------
+
+[[rule]]
+id = "H-01"
+phase = "h"
+kind = "deliverable"
+key = "change_management"
+severity = "warning"
+title = "Le traitement des changements est documenté"
+why = "La phase H dit comment un changement est évalué : simple mise à jour, ou nouveau cycle ADM."
+fix = "Déclarer le document dans [deliverables] change_management."
+
+[[rule]]
+id = "H-02"
+phase = "h"
+kind = "deliverable"
+key = "architecture_decisions"
+severity = "info"
+title = "Les décisions d'architecture sont tracées"
+why = "Garder la trace des décisions (ADR, Governance Log) permet d'évaluer un changement sans tout redécouvrir."
+fix = "Déclarer le dossier ou les fichiers de décisions dans [deliverables] architecture_decisions."
+
+# ---------- Requirements Management ----------
+
+[[rule]]
+id = "RM-01"
+phase = "rm"
+kind = "presence"
+types = ["Requirement"]
+min = 1
+severity = "error"
+title = "Les exigences sont modélisées"
+why = "La gestion des exigences est au centre de l'ADM : chaque phase en consomme et en produit."
+fix = "Ajouter des Requirement (et Constraint)."
+
+[[rule]]
+id = "RM-02"
+phase = "rm"
+kind = "trace"
+subject = ["Requirement"]
+linked = ["ApplicationComponent", "ApplicationService", "ApplicationFunction", "ApplicationProcess", "ApplicationInterface", "DataObject", "BusinessProcess", "BusinessService", "BusinessFunction", "BusinessActor", "BusinessRole", "BusinessObject", "Node", "Device", "SystemSoftware", "TechnologyService", "Artifact", "Capability", "Resource", "CourseOfAction", "WorkPackage", "Deliverable"]
+direction = "in"
+rel_types = ["Realization"]
+severity = "error"
+title = "Chaque exigence est réalisée par un élément de l'architecture"
+why = "Une exigence que rien ne réalise ne peut pas être vérifiée en phase G."
+fix = "Ajouter une relation Realization depuis le composant, service ou lot qui satisfait l'exigence."
+
+[[rule]]
+id = "RM-03"
+phase = "rm"
+kind = "trace"
+subject = ["Requirement"]
+linked = ["Goal", "Outcome", "Principle", "Driver", "Stakeholder", "Assessment"]
+severity = "warning"
+title = "Chaque exigence a une origine (objectif, principe ou partie prenante)"
+why = "Sans origine, on ne sait pas qui peut arbitrer ou abandonner l'exigence."
+fix = "Relier l'exigence à l'objectif qu'elle réalise ou au principe qui l'implique."
+
+# ---------- Qualité ----------
+
+[[rule]]
+id = "Q-01"
+phase = "quality"
+kind = "in_view"
+severity = "info"
+title = "Chaque élément apparaît dans au moins une vue"
+why = "Un élément présent dans aucune vue n'est vu par aucune partie prenante ; c'est souvent un oubli ou un doublon."
+fix = "Placer l'élément dans une vue, ou le supprimer s'il est obsolète."
